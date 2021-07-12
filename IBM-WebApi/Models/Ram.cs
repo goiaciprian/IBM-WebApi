@@ -9,7 +9,7 @@ namespace IBM_WebApi.Models
     public class Ram
     {
         [Key]
-        public int ID_Ram { get; set; }
+        public Guid ID_Ram { get; set; }
 
         [Required]
         public string Producator { get; set; }
@@ -23,5 +23,7 @@ namespace IBM_WebApi.Models
         [Required]
         public int Pret { get; set; }
 
+
+        public bool? Sters { get; set; } = false;
     }
 }

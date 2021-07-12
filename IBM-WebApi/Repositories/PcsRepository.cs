@@ -14,7 +14,7 @@ namespace IBM_WebApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<PCs> Delete(int id)
+        public Task<PCs> Delete(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -24,12 +24,12 @@ namespace IBM_WebApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<PCs> Get(int id)
+        public Task<PCs> Get(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PCs> Update(int id, PCs book)
+        public Task<PCs> Update(Guid id, PCs book)
         {
             throw new NotImplementedException();
         }

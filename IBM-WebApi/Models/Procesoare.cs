@@ -9,7 +9,8 @@ namespace IBM_WebApi.Models
     public class Procesoare
     {
         [Key]
-        public int ID_Cpu { get; set; }
+        public Guid ID_Cpu { get; set; }
+
         [Required]
         public string Producator { get; set; }
 
@@ -17,9 +18,10 @@ namespace IBM_WebApi.Models
         public string Model { get; set; }
 
         public bool Chipset { get; set; } = false;
-    
+
         [Required]
         public int Pret { get; set; }
 
+        public bool? Sters { get; set; } = false;
     }
 }

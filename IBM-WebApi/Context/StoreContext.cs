@@ -17,7 +17,7 @@ namespace IBM_WebApi.Context
         public DbSet<Procesoare> Procesoare { get; set; }
         public DbSet<PlaciVideo> PlaciVideo { get; set; }
         public DbSet<Ram> Ram { get; set; }
+        public DbSet<User> User { get; set; }
 
-        // todo proceduri de stocare ?
     }
 }

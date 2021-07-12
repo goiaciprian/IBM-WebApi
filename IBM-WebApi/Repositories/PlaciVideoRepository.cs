@@ -14,7 +14,7 @@ namespace IBM_WebApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<PlaciVideo> Delete(int id)
+        public Task<PlaciVideo> Delete(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -24,12 +24,12 @@ namespace IBM_WebApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<PlaciVideo> Get(int id)
+        public Task<PlaciVideo> Get(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<PlaciVideo> Update(int id, PlaciVideo book)
+        public Task<PlaciVideo> Update(Guid id, PlaciVideo book)
         {
             throw new NotImplementedException();
         }

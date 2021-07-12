@@ -9,7 +9,7 @@ namespace IBM_WebApi.Models
     public class PlaciVideo
     {
         [Key]
-        public int ID_Gpu { get; set; }
+        public Guid ID_Gpu { get; set; }
     
         [Required]
         public string Producator { get; set; }
@@ -21,5 +21,6 @@ namespace IBM_WebApi.Models
         [Required]
         public int Pret { get; set; }
 
+        public bool? Sters { get; set; } = false;
     }
 }
