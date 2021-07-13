@@ -32,6 +32,10 @@ namespace IBM_WebApi
             services.AddDbContext<StoreContext>(o => o.UseSqlServer(Configuration.GetConnectionString("PCStoreConnString")));
 
             services.AddScoped<DbCrud<User>, UserRepository>();
+            services.AddScoped<DbCrud<Ram>, RamRepository>();
+            services.AddScoped<DbCrud<Procesoare>, ProcesoareRepository>();
+            services.AddScoped<DbCrud<PlaciVideo>, PlaciVideoRepository>();
+            services.AddScoped<DbCrud<PCs>, PcsRepository>();
             services.AddControllers();
         }
 
