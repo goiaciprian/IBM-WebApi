@@ -29,6 +29,11 @@ namespace IBM_WebApi.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<PCs>> GetNotDeleted()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<PCs> Update(Guid id, PCs book)
         {
             throw new NotImplementedException();

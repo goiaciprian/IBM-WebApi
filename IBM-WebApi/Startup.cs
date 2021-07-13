@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using IBM_WebApi.Interfaces;
+using IBM_WebApi.Models;
+using IBM_WebApi.Repositories;
 
 namespace IBM_WebApi
 {
@@ -27,6 +30,9 @@ namespace IBM_WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<StoreContext>(o => o.UseSqlServer(Configuration.GetConnectionString("PCStoreConnString")));
+
+            services.AddScoped<DbCrud<User>, UserRepository>();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,10 +47,7 @@ namespace IBM_WebApi
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapControllers();
             });
         }
     }
