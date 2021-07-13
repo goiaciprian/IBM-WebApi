@@ -1,5 +1,7 @@
-﻿using IBM_WebApi.Interfaces;
+﻿using IBM_WebApi.Context;
+using IBM_WebApi.Interfaces;
 using IBM_WebApi.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,29 +11,51 @@ namespace IBM_WebApi.Repositories
 {
     public class RamRepository : DbCrud<Ram>
     {
-        public Task<Ram> Add(Ram book)
+
+        private readonly StoreContext _storeContext;
+
+        public RamRepository(StoreContext storeContext)
         {
-            throw new NotImplementedException();
+            _storeContext = storeContext;
         }
 
-        public Task<Ram> Delete(Guid  id)
+        public async Task<Ram> Add(Ram newObj)
         {
-            throw new NotImplementedException();
+            newObj.ID_Ram = Guid.NewGuid();
+            await _storeContext.Ram.AddAsync(newObj);
+            await _storeContext.SaveChangesAsync();
+            return newObj;
         }
 
-        public Task<IEnumerable<Ram>> Get()
+        public async Task<Ram> Delete(Guid  id)
         {
-            throw new NotImplementedException();
+            var _deleted = await _storeContext.Ram.FindAsync(id);
+            _deleted.Sters = true;
+            _storeContext.Entry(_deleted).State = EntityState.Modified;
+            await _storeContext.SaveChangesAsync();
+            return _deleted;
         }
 
-        public Task<Ram> Get(Guid  id)
+        public async Task<IEnumerable<Ram>> Get()
         {
-            throw new NotImplementedException();
+            return await _storeContext.Ram.ToListAsync();
         }
 
-        public Task<Ram> Update(Guid id, Ram book)
+        public async Task<Ram> Get(Guid  id)
         {
-            throw new NotImplementedException();
+            return await _storeContext.Ram.Where(ram => ram.Sters == false && ram.ID_Ram == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Ram>> GetNotDeleted()
+        {
+            return await _storeContext.Ram.Where(ram => ram.Sters == false).ToListAsync();
+        }
+
+        public async Task<Ram> Update(Guid id, Ram updateObj)
+        {
+            _storeContext.Entry(updateObj).State = EntityState.Modified;
+            await _storeContext.SaveChangesAsync();
+            return updateObj;
         }
     }
 }

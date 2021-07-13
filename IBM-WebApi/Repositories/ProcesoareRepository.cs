@@ -1,5 +1,7 @@
-﻿using IBM_WebApi.Interfaces;
+﻿using IBM_WebApi.Context;
+using IBM_WebApi.Interfaces;
 using IBM_WebApi.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,29 +11,48 @@ namespace IBM_WebApi.Repositories
 {
     public class ProcesoareRepository : DbCrud<Procesoare>
     {
-        public Task<Procesoare> Add(Procesoare book)
+        public readonly StoreContext _storeContext;
+        public ProcesoareRepository(StoreContext storeContext)
         {
-            throw new NotImplementedException();
+            _storeContext = storeContext;
+        }
+        public async Task<Procesoare> Add(Procesoare newObj)
+        {
+            newObj.ID_Cpu = Guid.NewGuid();
+            await _storeContext.Procesoare.AddAsync(newObj);
+            await _storeContext.SaveChangesAsync();
+            return newObj;
         }
 
-        public Task<Procesoare> Delete(Guid  id)
+        public async Task<Procesoare> Delete(Guid  id)
         {
-            throw new NotImplementedException();
+            var _deleted = await _storeContext.Procesoare.FindAsync(id);
+            _deleted.Sters = true;
+            _storeContext.Entry(_deleted).State = EntityState.Modified;
+            await _storeContext.SaveChangesAsync();
+            return _deleted;
         }
 
-        public Task<IEnumerable<Procesoare>> Get()
+        public async Task<IEnumerable<Procesoare>> Get()
         {
-            throw new NotImplementedException();
+            return await _storeContext.Procesoare.ToListAsync();
         }
 
-        public Task<Procesoare> Get(Guid  id)
+        public async Task<Procesoare> Get(Guid  id)
         {
-            throw new NotImplementedException();
+            return await _storeContext.Procesoare.Where(procesor => procesor.Sters == false && procesor.ID_Cpu == id).FirstOrDefaultAsync();
         }
 
-        public Task<Procesoare> Update(Guid  id, Procesoare book)
+        public async Task<IEnumerable<Procesoare>> GetNotDeleted()
         {
-            throw new NotImplementedException();
+            return await _storeContext.Procesoare.Where(procesor => procesor.Sters == false).ToListAsync();
+        }
+
+        public async Task<Procesoare> Update(Guid  id, Procesoare updateObj)
+        {
+            _storeContext.Entry(updateObj).State = EntityState.Modified;
+            await _storeContext.SaveChangesAsync();
+            return updateObj;
         }
     }
 }

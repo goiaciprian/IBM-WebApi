@@ -2,36 +2,59 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IBM_WebApi.Context;
 using IBM_WebApi.Interfaces;
 using IBM_WebApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace IBM_WebApi.Repositories
 {
     public class UserRepository : DbCrud<User>
     {
-        public Task<User> Add(User book)
+        private readonly StoreContext _storeContext;
+
+        public UserRepository(StoreContext storeContext)
         {
-            throw new NotImplementedException();
+            _storeContext = storeContext;
+        }
+        public async Task<User> Add(User newObj)
+        {
+            newObj.Id_User = Guid.NewGuid();
+            await _storeContext.User.AddAsync(newObj);
+            await _storeContext.SaveChangesAsync();
+            return newObj;
         }
 
-        public Task<User> Delete(Guid id)
+        public async Task<User> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            var _deleted = await _storeContext.User.FindAsync(id);
+            _deleted.Sters = true;
+            _storeContext.Entry(_deleted).State = EntityState.Modified;
+            await _storeContext.SaveChangesAsync();
+            return _deleted;
+
         }
 
-        public Task<IEnumerable<User>> Get()
+        public async Task<IEnumerable<User>> Get()
         {
-            throw new NotImplementedException();
+            return await _storeContext.User.ToListAsync();
         }
 
-        public Task<User> Get(Guid id)
+        public async Task<User> Get(Guid id)
         {
-            throw new NotImplementedException();
+            return await _storeContext.User.Where(user => user.Id_User == id && user.Sters == false ).FirstOrDefaultAsync();
         }
 
-        public Task<User> Update(Guid id, User book)
+        public async Task<IEnumerable<User>> GetNotDeleted()
         {
-            throw new NotImplementedException();
+            return await _storeContext.User.Where(user => user.Sters == false).ToListAsync();
+        }
+
+        public async Task<User> Update(Guid id, User updateObj)
+        {
+            _storeContext.Entry(updateObj).State = EntityState.Modified;
+            await _storeContext.SaveChangesAsync();
+            return updateObj;
         }
     }
 }
