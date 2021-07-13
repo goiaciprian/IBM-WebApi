@@ -1,4 +1,6 @@
-﻿using IBM_WebApi.Interfaces;
+﻿using IBM_WebApi.DTOs;
+using IBM_WebApi.Extensions;
+using IBM_WebApi.Interfaces;
 using IBM_WebApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,47 +23,48 @@ namespace IBM_WebApi.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<User>>> GetDeleted()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetDeleted()
         {
-            return Ok(await _userRepo.Get());
+            return Ok((await _userRepo.Get()).Select(user => user.toDTO()).ToList());
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> Get()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> Get()
         {
-            return Ok(await _userRepo.GetNotDeleted());
+            return Ok((await _userRepo.GetNotDeleted()).Select(user => user.toDTO()).ToList());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetId(Guid id)
+        public async Task<ActionResult<UserDTO>> GetId(Guid id)
         {
             var _user = await _userRepo.Get(id);
             if (_user == null)
                 return NotFound();
-            else return Ok(_user);
+            else return Ok(_user.toDTO());
         }
 
         [HttpPost]
-        public async Task<User> Add([FromBody] User newUser )
+        public async Task<ActionResult<UserDTO>> Add([FromBody] UserDTO newUser )
         {
-            return await _userRepo.Add(newUser);
+            var _created = await _userRepo.Add(newUser.toEntity());
+            return CreatedAtAction(nameof(GetId), new { id = _created.Id_User}, _created.toDTO());
         }
 
         [HttpPost("{id}")]
-        public async Task<ActionResult<User>> Update (Guid id, [FromBody] User updateUser)
+        public async Task<ActionResult<UserDTO>> Update (Guid id, [FromBody] UserDTO updateUser)
         {
             if (id != updateUser.Id_User)
                 return BadRequest();
-            else return Ok(await _userRepo.Update(id, updateUser));
+            else return Ok((await _userRepo.Update(id, updateUser.toEntity())).toDTO());
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> Delete (Guid id)
+        public async Task<ActionResult<UserDTO>> Delete (Guid id)
         {
             var _deleted = await _userRepo.Delete(id);
             if (_deleted == null)
                 return NotFound();
-            else return Ok(_deleted);
+            else return Ok(_deleted.toDTO());
         }
     }
 }

@@ -9,7 +9,7 @@ namespace IBM_WebApi.Repositories
 {
     public class PcsRepository : DbCrud<PCs>
     {
-        public Task<PCs> Add(PCs book)
+        public Task<PCs> Add(PCs newObj)
         {
             throw new NotImplementedException();
         }
@@ -34,7 +34,7 @@ namespace IBM_WebApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<PCs> Update(Guid id, PCs book)
+        public Task<PCs> Update(Guid id, PCs updateObj)
         {
             throw new NotImplementedException();
         }
