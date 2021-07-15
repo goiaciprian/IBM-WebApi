@@ -10,9 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using IBM_WebApi.Interfaces;
+using IBM_WebApi.Interfaces.IRepositories;
+using IBM_WebApi.Interfaces.IUnitsOfWork;
 using IBM_WebApi.Models;
 using IBM_WebApi.Repositories;
+using IBM_WebApi.Services.UnitsOfWork;
 
 namespace IBM_WebApi
 {
@@ -31,11 +33,14 @@ namespace IBM_WebApi
         {
             services.AddDbContext<StoreContext>(o => o.UseSqlServer(Configuration.GetConnectionString("PCStoreConnString")));
 
-            services.AddScoped<DbCrud<User>, UserRepository>();
-            services.AddScoped<DbCrud<Ram>, RamRepository>();
-            services.AddScoped<DbCrud<Procesoare>, ProcesoareRepository>();
-            services.AddScoped<DbCrud<PlaciVideo>, PlaciVideoRepository>();
-            services.AddScoped<DbCrud<PCs>, PcsRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRamRepository, RamRepository>();
+            services.AddScoped<IProcesoareRepository, ProcesoareRepository>();
+            services.AddScoped<IPlaciVideoRepository, PlaciVideoRepository>();
+            services.AddScoped<IPcsRepository, PcsRepository>();
+
+            services.AddScoped<IUserUnitOfWork, UserUnitOfWork>();
+            services.AddScoped<IStoreUnitOfWork, StoreUnitOfWork>();
             services.AddControllers();
         }
 

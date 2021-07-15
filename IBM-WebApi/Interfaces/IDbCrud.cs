@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace IBM_WebApi.Interfaces
 {
-    public interface DbCrud <T>
+    public interface IDbCrud <T> where T : class
     {
         Task<IEnumerable<T>> Get();
         Task<IEnumerable<T>> GetNotDeleted();

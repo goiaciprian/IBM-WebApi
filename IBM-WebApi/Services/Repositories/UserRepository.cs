@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IBM_WebApi.Context;
-using IBM_WebApi.Interfaces;
+using IBM_WebApi.Interfaces.IRepositories;
 using IBM_WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace IBM_WebApi.Repositories
 {
-    public class UserRepository : DbCrud<User>
+    public class UserRepository : IUserRepository
     {
         private readonly StoreContext _storeContext;
 
@@ -21,7 +21,6 @@ namespace IBM_WebApi.Repositories
         {
             newObj.Id_User = Guid.NewGuid();
             await _storeContext.User.AddAsync(newObj);
-            await _storeContext.SaveChangesAsync();
             return newObj;
         }
 
@@ -30,7 +29,6 @@ namespace IBM_WebApi.Repositories
             var _deleted = await _storeContext.User.FindAsync(id);
             _deleted.Sters = true;
             _storeContext.Entry(_deleted).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return _deleted;
 
         }
@@ -45,6 +43,11 @@ namespace IBM_WebApi.Repositories
             return await _storeContext.User.Where(user => user.Id_User == id && user.Sters == false ).FirstOrDefaultAsync();
         }
 
+        public async Task<IEnumerable<User>> GetAdminUsers()
+        {
+            return await _storeContext.User.Where(user => user.Sters == false && user.isAdmin).ToListAsync();
+        }
+
         public async Task<IEnumerable<User>> GetNotDeleted()
         {
             return await _storeContext.User.Where(user => user.Sters == false).ToListAsync();
@@ -53,7 +56,6 @@ namespace IBM_WebApi.Repositories
         public async Task<User> Update(Guid id, User updateObj)
         {
             _storeContext.Entry(updateObj).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return updateObj;
         }
     }

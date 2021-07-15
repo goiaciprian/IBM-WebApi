@@ -1,5 +1,5 @@
 ﻿using IBM_WebApi.Context;
-using IBM_WebApi.Interfaces;
+using IBM_WebApi.Interfaces.IRepositories;
 using IBM_WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IBM_WebApi.Repositories
 {
-    public class ProcesoareRepository : DbCrud<Procesoare>
+    public class ProcesoareRepository : IProcesoareRepository
     {
         public readonly StoreContext _storeContext;
         public ProcesoareRepository(StoreContext storeContext)
@@ -20,7 +20,6 @@ namespace IBM_WebApi.Repositories
         {
             newObj.ID_Cpu = Guid.NewGuid();
             await _storeContext.Procesoare.AddAsync(newObj);
-            await _storeContext.SaveChangesAsync();
             return newObj;
         }
 
@@ -29,7 +28,6 @@ namespace IBM_WebApi.Repositories
             var _deleted = await _storeContext.Procesoare.FindAsync(id);
             _deleted.Sters = true;
             _storeContext.Entry(_deleted).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return _deleted;
         }
 
@@ -51,7 +49,6 @@ namespace IBM_WebApi.Repositories
         public async Task<Procesoare> Update(Guid  id, Procesoare updateObj)
         {
             _storeContext.Entry(updateObj).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return updateObj;
         }
     }

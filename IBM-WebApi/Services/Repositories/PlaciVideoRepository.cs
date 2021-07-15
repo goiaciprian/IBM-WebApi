@@ -1,5 +1,5 @@
 ﻿using IBM_WebApi.Context;
-using IBM_WebApi.Interfaces;
+using IBM_WebApi.Interfaces.IRepositories;
 using IBM_WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IBM_WebApi.Repositories
 {
-    public class PlaciVideoRepository : DbCrud<PlaciVideo>
+    public class PlaciVideoRepository : IPlaciVideoRepository
     {
         private readonly StoreContext _storeContext;
 
@@ -21,7 +21,6 @@ namespace IBM_WebApi.Repositories
         {
             newObj.ID_Gpu = Guid.NewGuid();
             await _storeContext.PlaciVideo.AddAsync(newObj);
-            await _storeContext.SaveChangesAsync();
             return newObj;
         }
 
@@ -30,7 +29,6 @@ namespace IBM_WebApi.Repositories
             var _deleted = await _storeContext.PlaciVideo.FindAsync(id);
             _deleted.Sters = true;
             _storeContext.Entry(_deleted).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return _deleted;
         }
 
@@ -52,7 +50,6 @@ namespace IBM_WebApi.Repositories
         public async Task<PlaciVideo> Update(Guid id, PlaciVideo updateObj)
         {
             _storeContext.Entry(updateObj).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return updateObj;
         }
     }
