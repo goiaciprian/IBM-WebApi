@@ -1,5 +1,5 @@
 ﻿using IBM_WebApi.Context;
-using IBM_WebApi.Interfaces;
+using IBM_WebApi.Interfaces.IRepositories;
 using IBM_WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IBM_WebApi.Repositories
 {
-    public class RamRepository : DbCrud<Ram>
+    public class RamRepository : IRamRepository
     {
 
         private readonly StoreContext _storeContext;
@@ -23,7 +23,6 @@ namespace IBM_WebApi.Repositories
         {
             newObj.ID_Ram = Guid.NewGuid();
             await _storeContext.Ram.AddAsync(newObj);
-            await _storeContext.SaveChangesAsync();
             return newObj;
         }
 
@@ -32,7 +31,6 @@ namespace IBM_WebApi.Repositories
             var _deleted = await _storeContext.Ram.FindAsync(id);
             _deleted.Sters = true;
             _storeContext.Entry(_deleted).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return _deleted;
         }
 
@@ -54,7 +52,6 @@ namespace IBM_WebApi.Repositories
         public async Task<Ram> Update(Guid id, Ram updateObj)
         {
             _storeContext.Entry(updateObj).State = EntityState.Modified;
-            await _storeContext.SaveChangesAsync();
             return updateObj;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using IBM_WebApi.DTOs;
 using IBM_WebApi.Extensions;
 using IBM_WebApi.Interfaces;
+using IBM_WebApi.Interfaces.IUnitsOfWork;
 using IBM_WebApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,29 +16,29 @@ namespace IBM_WebApi.Controllers
     [ApiController]
     public class CpuController : ControllerBase
     {
-        private readonly DbCrud<Procesoare> _cpuRepo;
+        private readonly IStoreUnitOfWork _storeUnit;
 
-        public CpuController(DbCrud<Procesoare> repo)
+        public CpuController(IStoreUnitOfWork unit)
         {
-            _cpuRepo = repo;
+            _storeUnit = unit;
         }
 
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<ProcesoareDTO>>> GetAll()
         {
-            return Ok((await _cpuRepo.Get()).Select(cpu => cpu.toDTO()).ToList());
+            return Ok((await _storeUnit.CPUs.Get()).Select(cpu => cpu.toDTO()).ToList());
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProcesoareDTO>>> Get()
         {
-            return Ok((await _cpuRepo.GetNotDeleted()).Select(cpu => cpu.toDTO()).ToList());
+            return Ok((await _storeUnit.CPUs.GetNotDeleted()).Select(cpu => cpu.toDTO()).ToList());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<ProcesoareDTO>>> GetById(Guid id)
         {
-            var _found = await _cpuRepo.Get(id);
+            var _found = await _storeUnit.CPUs.Get(id);
             if (_found == null) return NotFound();
             else return Ok(_found.toDTO());
         }
@@ -45,7 +46,8 @@ namespace IBM_WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ProcesoareDTO>> Add ([FromBody] ProcesoareDTO cpu)
         {
-            var _created = await _cpuRepo.Add(cpu.toEntity());
+            var _created = await _storeUnit.CPUs.Add(cpu.toEntity());
+            await _storeUnit.Complete();
             return CreatedAtAction(nameof(GetById), new { id = _created.ID_Cpu }, _created);
         }
 
@@ -53,13 +55,19 @@ namespace IBM_WebApi.Controllers
         public async Task<ActionResult<ProcesoareDTO>> Update(Guid id, [FromBody] ProcesoareDTO cpu)
         {
             if (id != cpu.ID_Cpu) return BadRequest();
-            else return Ok((await _cpuRepo.Update(id, cpu.toEntity())).toDTO());
+            else
+            {
+                var _update = await _storeUnit.CPUs.Update(id, cpu.toEntity());
+                await _storeUnit.Complete();
+                return Ok(_update.toDTO());
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProcesoareDTO>> Delete(Guid id)
         {
-            var _deleted = await _cpuRepo.Delete(id);
+            var _deleted = await _storeUnit.CPUs.Delete(id);
+            await _storeUnit.Complete();
             if (_deleted == null) return NotFound();
             else return Ok(_deleted.toDTO());
         }

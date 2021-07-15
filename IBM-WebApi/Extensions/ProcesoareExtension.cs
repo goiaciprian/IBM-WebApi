@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IBM_WebApi.Extensions
 {
-    public static class ProcesoareExtenrion
+    public static class ProcesoareExtension
     {
         public static ProcesoareDTO toDTO(this Procesoare cpu)
         {
