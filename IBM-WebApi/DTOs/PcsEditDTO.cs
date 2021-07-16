@@ -18,5 +18,7 @@ namespace IBM_WebApi.DTOs
 
         public Guid ID_Ram { get; set; }
 
+        public int Pret { get; set; }
+
     }
 }
