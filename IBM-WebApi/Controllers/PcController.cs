@@ -44,13 +44,9 @@ namespace IBM_WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<PcsGetDTO>> Add([FromBody] PcsEditDTO pc)
         {
-            var _added = await _storeUnit.Pcs.Add(pc.toEntity(
-                    await _storeUnit.CPUs.Get(pc.ID_Cpu),
-                    await _storeUnit.GPUs.Get(pc.ID_Gpu),
-                    await _storeUnit.Rams.Get(pc.ID_Ram)
-                ));
+            var _added = await _storeUnit.Pcs.Add(pc.toEntity());
             await _storeUnit.Complete();
-            return CreatedAtAction(nameof(GetbyId), new { id = _added.ID_Pc }, _added.toTDO());
+            return CreatedAtAction(nameof(GetbyId), new { id = _added.ID_Pc }, (await _storeUnit.Pcs.Get(_added.ID_Pc)).toTDO());
         }
 
         [HttpPost("{id}")]
@@ -60,13 +56,9 @@ namespace IBM_WebApi.Controllers
                 return BadRequest();
             else
             {
-                var _updated = await _storeUnit.Pcs.Update(id, pc.toEntity(
-                        await _storeUnit.CPUs.Get(pc.ID_Cpu),
-                        await _storeUnit.GPUs.Get(pc.ID_Gpu),
-                        await _storeUnit.Rams.Get(pc.ID_Ram)
-                    ));
+                var _updated = await _storeUnit.Pcs.Update(id, pc.toEntity());
                 await _storeUnit.Complete();
-                return Ok(_updated.toTDO());
+                return Ok((await _storeUnit.Pcs.Get(_updated.ID_Pc)).toTDO());
             }
         }
 
