@@ -3,6 +3,7 @@ using IBM_WebApi.Extensions;
 using IBM_WebApi.Interfaces;
 using IBM_WebApi.Interfaces.IUnitsOfWork;
 using IBM_WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,6 +15,7 @@ namespace IBM_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class GpuController : ControllerBase
     {
         private readonly IStoreUnitOfWork _storeUnit;
@@ -23,7 +25,7 @@ namespace IBM_WebApi.Controllers
             _storeUnit = repo;
         }
 
-        [HttpGet("all")]
+        [HttpGet("all"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<PlaciVideoDTO>>> GetAll()
         {
             return Ok((await _storeUnit.GPUs.Get()).Select(gpu => gpu.toDTO()).ToList());

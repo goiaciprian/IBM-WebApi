@@ -15,6 +15,10 @@ using IBM_WebApi.Interfaces.IUnitsOfWork;
 using IBM_WebApi.Models;
 using IBM_WebApi.Repositories;
 using IBM_WebApi.Services.UnitsOfWork;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.IdentityModel.Logging;
 
 namespace IBM_WebApi
 {
@@ -31,6 +35,37 @@ namespace IBM_WebApi
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // pentru azure
+            IdentityModelEventSource.ShowPII = true;
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("EnableCORS", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = "https://localhost:44325",
+                    ValidAudience = "https://localhost:44325",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecurityKey"]))
+                };
+            });
+
             services.AddDbContext<StoreContext>(o => o.UseSqlServer(Configuration.GetConnectionString("PCStoreConnString")));
 
             services.AddScoped<IUserRepository, UserRepository>();
@@ -41,6 +76,7 @@ namespace IBM_WebApi
 
             services.AddScoped<IUserUnitOfWork, UserUnitOfWork>();
             services.AddScoped<IStoreUnitOfWork, StoreUnitOfWork>();
+
             services.AddControllers();
         }
 
@@ -53,6 +89,10 @@ namespace IBM_WebApi
             }
 
             app.UseRouting();
+
+            app.UseCors("EnableCORS");
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

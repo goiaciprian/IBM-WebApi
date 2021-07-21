@@ -48,7 +48,7 @@ namespace IBM_WebApi.Repositories
 
         public async Task<Procesoare> Update(Guid  id, Procesoare updateObj)
         {
-            _storeContext.Entry(updateObj).State = EntityState.Modified;
+            await Task.Run(() => _storeContext.Entry(updateObj).State = EntityState.Modified);
             return updateObj;
         }
     }

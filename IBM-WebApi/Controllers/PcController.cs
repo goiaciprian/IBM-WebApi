@@ -1,6 +1,7 @@
 ﻿using IBM_WebApi.DTOs;
 using IBM_WebApi.Extensions;
 using IBM_WebApi.Interfaces.IUnitsOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,6 +14,7 @@ namespace IBM_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PcController : ControllerBase
     {
         private readonly IStoreUnitOfWork _storeUnit;
@@ -22,7 +24,7 @@ namespace IBM_WebApi.Controllers
             _storeUnit = store;
         }
 
-        [HttpGet("all")]
+        [HttpGet("all"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<PcsGetDTO>>> GetAll()
         {
             return Ok((await _storeUnit.Pcs.Get()).Select(pc => pc.toTDO()).ToList());
