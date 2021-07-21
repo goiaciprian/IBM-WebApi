@@ -8,6 +8,7 @@ namespace IBM_WebApi.Interfaces.IRepositories
 {
     public interface IUserRepository: IDbCrud<User>
     {
+        public Task<User> GetOnLogIn(string Email, string Password);
         public Task<IEnumerable<User>> GetAdminUsers();
     }
 }

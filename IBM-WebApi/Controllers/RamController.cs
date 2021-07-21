@@ -2,6 +2,7 @@
 using IBM_WebApi.Extensions;
 using IBM_WebApi.Interfaces.IUnitsOfWork;
 using IBM_WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,6 +14,7 @@ namespace IBM_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]    
     public class RamController : ControllerBase
     {
         private readonly IStoreUnitOfWork _storeUnit;
@@ -22,7 +24,7 @@ namespace IBM_WebApi.Controllers
             _storeUnit = repo;
         }
 
-        [HttpGet("all")]
+        [HttpGet("all"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<RamDTO>>> GetAll()
         {
             return Ok((await _storeUnit.Rams.Get()).Select(ram => ram.toDTO()).ToList());

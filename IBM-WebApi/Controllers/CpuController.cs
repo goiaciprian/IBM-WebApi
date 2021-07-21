@@ -3,6 +3,7 @@ using IBM_WebApi.Extensions;
 using IBM_WebApi.Interfaces;
 using IBM_WebApi.Interfaces.IUnitsOfWork;
 using IBM_WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,6 +15,7 @@ namespace IBM_WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CpuController : ControllerBase
     {
         private readonly IStoreUnitOfWork _storeUnit;
@@ -23,7 +25,7 @@ namespace IBM_WebApi.Controllers
             _storeUnit = unit;
         }
 
-        [HttpGet("all")]
+        [HttpGet("all"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<ProcesoareDTO>>> GetAll()
         {
             return Ok((await _storeUnit.CPUs.Get()).Select(cpu => cpu.toDTO()).ToList());

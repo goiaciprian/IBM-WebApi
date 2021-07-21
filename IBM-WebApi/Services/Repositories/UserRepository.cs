@@ -53,9 +53,14 @@ namespace IBM_WebApi.Repositories
             return await _storeContext.User.Where(user => user.Sters == false).ToListAsync();
         }
 
+        public async Task<User> GetOnLogIn(string Email, string Password)
+        {
+            return await _storeContext.User.Where(user => user.Sters == false && user.Email == Email && user.Parola == Password ).FirstOrDefaultAsync();
+        }
+
         public async Task<User> Update(Guid id, User updateObj)
         {
-            _storeContext.Entry(updateObj).State = EntityState.Modified;
+            await Task.Run(() => _storeContext.Entry(updateObj).State = EntityState.Modified);
             return updateObj;
         }
     }

@@ -51,7 +51,7 @@ namespace IBM_WebApi.Repositories
 
         public async Task<Ram> Update(Guid id, Ram updateObj)
         {
-            _storeContext.Entry(updateObj).State = EntityState.Modified;
+            await Task.Run(() => _storeContext.Entry(updateObj).State = EntityState.Modified);
             return updateObj;
         }
     }
